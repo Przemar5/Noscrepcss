@@ -37,7 +37,43 @@ $columns: 3;
   }
 }
 
-@mixin col-margin-combo()
+
+@mixin col-margin-combo($i, $j, $k, $site, $prefix, $step, $break-points) {
+  .#{ $prefix }-col-#{ $j }-#{ $i }.#{ $prefix }-m#{ $site }-#{ $k } {
+    $offset: 2rem;
+    @if $site == 'x' or $site == '' {
+      $offset: calc(#{ $step } * 2rem);
+    }
+    @else if $site == 'l' or $site == 'r' {
+      $offset: calc(.5rem + (#{ $step } * 1rem));
+    }
+
+    width: calc((#{ $j } * (100% / #{ $i })) - #{ $offset });
+    margin: {
+      @include col-sites($site, $step, 4px);
+    }
+  }
+
+  @each $break in $break-points {
+    @media (min-width: $break) {
+      .#{ $prefix }-col-#{ $j }-#{ $i }.#{ $prefix }-m#{ $site }-#{ $k } {
+        $offset: 2rem;
+        @if $site == 'x' or $site == '' {
+          $offset: calc(#{ $step } * 2rem);
+        }
+        @else if $site == 'l' or $site == 'r' {
+          $offset: calc(.5rem + (#{ $step } * 1rem));
+        }
+
+        width: calc((#{ $j } * (100% / #{ $i })) - #{ $offset });
+        margin: {
+          @include col-sites($site, $step, 4px);
+        }
+      }
+    }
+  }
+}
+
 
 @mixin col-x-y($col-per-rows, $break-points, $measure-steps, $margin-prefix) {
   @each $i in $col-per-rows {
@@ -59,11 +95,8 @@ $columns: 3;
           }
         }
 
-        .#{ $prefix }-col-#{ $j }-#{ $i }.#{ $prefix }-mx-#{ $k } {
-          width: calc((#{ $j } * (100% / #{ $i })) - (#{ $step } * 2rem));
-          margin: {
-            @include col-sites('x', $step, 4px);
-          }
+        @each $site in ('x', 'y', 't', 'l', 'r', 'b') {
+          @include col-margin-combo($i, $j, $k, $site, $prefix, $step,  '');
         }
 
         .#{ $prefix }-col-#{ $j }-#{ $i }.#{ $prefix }-my-#{ $k } {
