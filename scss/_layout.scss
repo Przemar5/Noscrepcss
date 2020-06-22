@@ -1,0 +1,108 @@
+$prefix: 'nsc';
+$break-points: (
+  'sm': 540px,
+  'md': 780px,
+  'lg': 940px,
+  'xl': 1140px
+);
+$measure-steps: 0, .25, .5, .75, 1, 1.5;
+$cols-num: 1, 2, 3, 4, 5, 6, 12;
+$margin-prefix: '#{ $prefix }-m';
+
+$columns: 3;
+
+@mixin col() {
+	box-sizing: border-box;
+	background-color: #bbb;
+	display: inline-block;
+	margin-top: 1rem;
+	margin-left: .5rem;
+	margin-right: calc(.5rem - 4px);
+	margin-bottom: 1rem;
+	padding: .5rem;
+}
+
+@mixin col-sites($site, $width, $width-correction) {
+  @if $site == 't' or $site == 'y' or $site == '' {
+    top: $width * 1rem;
+  }
+  @if $site == 'l' or $site == 'x' or $site == '' {
+    left: $width * 1rem;
+  }
+  @if $site == 'r' or $site == 'x' or $site == '' {
+    right: calc((#{ $width } * 1rem) - 4px);
+  }
+  @if $site == 'b' or $site == 'y' or $site == '' {
+    bottom: $width * 1rem;
+  }
+}
+
+@mixin col-margin-combo()
+
+@mixin col-x-y($col-per-rows, $break-points, $measure-steps, $margin-prefix) {
+  @each $i in $col-per-rows {
+    @for $j from 1 through $i - 1 {
+      // Initialize column layout
+      .#{ $prefix }-col-#{ $j }-#{ $i } { 
+        @include col;
+        
+        width: calc((#{ $j } * (100% / #{ $i })) - 1rem);
+      }
+
+      // Initialize column margin when used with margin utility (.nsc-m-*)
+      $k: 0;
+      @each $step in $measure-steps {
+        .#{ $prefix }-col-#{ $j }-#{ $i }.#{ $prefix }-m-#{ $k } {
+          width: calc((#{ $j } * (100% / #{ $i })) - (#{ $step } * 2rem));
+          margin: {
+            @include col-sites('', $step, 4px);
+          }
+        }
+
+        .#{ $prefix }-col-#{ $j }-#{ $i }.#{ $prefix }-mx-#{ $k } {
+          width: calc((#{ $j } * (100% / #{ $i })) - (#{ $step } * 2rem));
+          margin: {
+            @include col-sites('x', $step, 4px);
+          }
+        }
+
+        .#{ $prefix }-col-#{ $j }-#{ $i }.#{ $prefix }-my-#{ $k } {
+          width: calc((#{ $j } * (100% / #{ $i })) - (#{ $step } * 2rem));
+          margin: {
+            top: calc(#{ $step } * 1rem);
+            bottom: calc(#{ $step } * 1rem);
+          }
+        }
+
+        $k: $k + 1;
+      }
+      
+      @each $break-name, $break-size in $break-points {
+        @media (min-width: $break-size) {
+          .#{ $prefix }-col-#{ $break-name }-#{ $j }-#{ $i } {
+            @include col;
+            
+            width: calc((#{ $j } * (100% / #{ $i })) - 1rem);
+          }
+        }
+      }
+    }
+  }
+}
+
+@mixin create-util($name, $type, $measure-steps) {
+  $i: 1;
+
+  @each $step in $measure-steps {
+    .#{ $prefix }-#{ $name }-#{ $i - 1 } {
+      #{ $type }: calc(#{ $step } * 1rem);
+    }
+
+    $i: $i + 1;
+  }
+}
+
+@include col-x-y($cols-num, $break-points, $measure-steps, $margin-prefix);
+@include create-util('p', 'padding', $measure-steps);
+@include create-util('m', 'margin', $measure-steps);
+

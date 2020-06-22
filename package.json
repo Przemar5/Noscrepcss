@@ -1,0 +1,16 @@
+{
+  "name": "noscrepcss",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "scss": "node-sass -watch scss -o style.css"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "install.js": "^1.0.1",
+    "node-sass": "^4.14.1"
+  }
+}
