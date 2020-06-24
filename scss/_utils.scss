@@ -1,0 +1,46 @@
+@mixin sites($site, $width, $width-correction) {
+
+    @if $site == 't' or $site == 'y' or $site == '' {
+        top: $width * 1rem;
+    }
+    @if $site == 'l' or $site == 'x' or $site == '' {
+        left: $width * 1rem;
+    }
+    @if $site == 'r' or $site == 'x' or $site == '' {
+        right: calc((#{ $width } * 1rem) - 4px);
+    }
+    @if $site == 'b' or $site == 'y' or $site == '' {
+        bottom: $width * 1rem;
+    }
+}
+
+
+@mixin create-util($name, $attr, $values) {
+    $i: 1;
+
+    @each $value in $values {
+        .#{ $prefix }#{ $name }-#{ $i - 1 } {
+            @if type-of($value) == number {
+                #{ $attr }: calc(#{ $value } * 1rem);
+            }
+            @else {
+                #{ $attr }: #{ $value };
+            }
+        }
+
+        $i: $i + 1;
+    }
+}
+
+
+@mixin create-borders($type, $widths, $color) {
+    $i: 0;
+
+    @each $width in $widths {
+        .#{ $prefix }b-#{ $i } {
+            border: $type #{ $width * 1px } $color;
+        }
+
+        $i: $i + 1;
+    }
+}
